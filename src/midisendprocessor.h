@@ -35,7 +35,7 @@ extern std::atomic<bool> g_threadsShouldFinish;
 class MidiSendProcessor
 {
 private:
-    typedef struct{
+    typedef struct {
         std::string device_name;
         std::vector<unsigned char> midi;
     } MidiDeviceAndMessage;

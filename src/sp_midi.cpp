@@ -64,7 +64,7 @@ void prepareMidiSendProcessorOutputs(unique_ptr<MidiSendProcessor>& midiSendProc
 int sp_midi_open_all_inputs()
 {
     // Prepare the MIDI inputs
-    try{
+    try {
         MidiInputs::getInstance().prepareMidiInputs(true, vector<string>());
     } catch (const std::out_of_range&) {
         cout << "Error opening MIDI inputs" << endl;
@@ -75,11 +75,11 @@ int sp_midi_open_all_inputs()
 
 int sp_midi_open_some_inputs(char **input_names, int len)
 {
-    vector<string> selected_midi_inputs;    
-    for (int i = 0; i < len; i++){
+    vector<string> selected_midi_inputs;
+    for (int i = 0; i < len; i++) {
         selected_midi_inputs.push_back(input_names[i]);
     }
-    try{
+    try {
         MidiInputs::getInstance().prepareMidiInputs(false, selected_midi_inputs);
     } catch (const std::out_of_range&) {
         cout << "Error opening MIDI inputs" << endl;
@@ -128,7 +128,7 @@ int sp_midi_send(const char* device_name, const unsigned char* c_message, unsign
 
 int sp_midi_init()
 {
-    if (g_already_initialized){
+    if (g_already_initialized) {
         return 0;
     }
     g_already_initialized = true;
@@ -151,7 +151,7 @@ int sp_midi_init()
 
 void sp_midi_deinit()
 {
-    if (!g_already_initialized){
+    if (!g_already_initialized) {
         return;
     }
     g_already_initialized = false;
@@ -162,7 +162,7 @@ void sp_midi_deinit()
 
     // We give them some time to exit
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    
+
     // And we stop them
     MidiInputs::getInstance().clear();
     midiSendProcessor.reset(nullptr);
@@ -257,7 +257,7 @@ ERL_NIF_TERM sp_midi_open_some_inputs_nif(ErlNifEnv* env, int argc, const ERL_NI
 {
     unsigned int len;
     int ret = enif_get_list_length(env, argv[0], &len);
-    if (!ret){
+    if (!ret) {
         return enif_make_badarg(env);
     }
     char **c_str_list = (char **)malloc(len * sizeof(char*));
@@ -267,11 +267,11 @@ ERL_NIF_TERM sp_midi_open_some_inputs_nif(ErlNifEnv* env, int argc, const ERL_NI
     ERL_NIF_TERM tail;
     char device_name[256];
     int i = 0;
-    while (enif_get_list_cell(env, *list, &head, &tail)){
+    while (enif_get_list_cell(env, *list, &head, &tail)) {
         int str_len = enif_get_string(env, head, device_name, 256, ERL_NIF_LATIN1);
-        if (!str_len){
+        if (!str_len) {
             return enif_make_badarg(env);
-        }  
+        }
         c_str_list[i] = (char*)malloc(str_len * sizeof(char));
         strcpy(c_str_list[i], device_name);
         list = &tail;
@@ -294,12 +294,12 @@ ERL_NIF_TERM sp_midi_send_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
     char device_name[256];
 
     int ret = enif_get_string(env, argv[0], device_name, 256, ERL_NIF_LATIN1);
-    if (!ret){
+    if (!ret) {
         return enif_make_badarg(env);
     }
 
     ret = enif_inspect_binary(env, argv[1], &bin);
-    if (!ret){
+    if (!ret) {
         return enif_make_badarg(env);
     }
 
@@ -307,7 +307,7 @@ ERL_NIF_TERM sp_midi_send_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
     int size = (int)bin.size;
 
     int rc = sp_midi_send(device_name, c_message, size);
-    if (rc != 0){
+    if (rc != 0) {
         return enif_make_atom(env, "warning");
     }
     return enif_make_atom(env, "ok");
@@ -362,7 +362,7 @@ ERL_NIF_TERM sp_midi_refresh_devices(ErlNifEnv* env, int argc, const ERL_NIF_TER
 
 ERL_NIF_TERM sp_midi_have_my_pid_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    if (!enif_self(env, &midi_process_pid)){
+    if (!enif_self(env, &midi_process_pid)) {
         return enif_make_badarg(env);
     }
     return enif_make_atom(env, "ok");
@@ -371,7 +371,7 @@ ERL_NIF_TERM sp_midi_have_my_pid_nif(ErlNifEnv* env, int argc, const ERL_NIF_TER
 
 ERL_NIF_TERM sp_midi_set_this_pid_nif(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    if (!enif_is_pid(env, argv[0])){
+    if (!enif_is_pid(env, argv[0])) {
         return enif_make_badarg(env);
     }
 

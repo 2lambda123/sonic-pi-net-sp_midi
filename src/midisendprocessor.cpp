@@ -37,7 +37,7 @@ void MidiSendProcessor::startThread()
 MidiSendProcessor::~MidiSendProcessor()
 {
     m_logger.trace("MidiSendProcessor destructor");
-    if (m_thread.joinable()){
+    if (m_thread.joinable()) {
         m_thread.join();
     }
 }
@@ -58,7 +58,7 @@ void MidiSendProcessor::prepareOutputs(const vector<MidiPortInfo>& portsInfo)
     }
 }
 
-void MidiSendProcessor::clear(){
+void MidiSendProcessor::clear() {
     m_outputs.clear();
 }
 
@@ -89,9 +89,9 @@ void MidiSendProcessor::flushMessages()
 void MidiSendProcessor::run()
 {
     MidiDeviceAndMessage msg;
-    while (!g_threadsShouldFinish){
+    while (!g_threadsShouldFinish) {
         bool available = m_messages.wait_dequeue_timed(msg, std::chrono::milliseconds(500));
-        if (available && !m_flushing){
+        if (available && !m_flushing) {
             processMessage(msg);
         }
     }
@@ -100,11 +100,11 @@ void MidiSendProcessor::run()
 
 void MidiSendProcessor::processMessage(const MidiDeviceAndMessage& message_from_c)
 {
-    try{
+    try {
         //print_time_stamp('B');
         send(message_from_c.device_name, &message_from_c.midi);
     }
-    catch (const std::exception& e){
+    catch (const std::exception& e) {
         m_logger.error("Exception thrown in MidiSendProcessor::ProcessMessage: {}!!!", e.what());
     }
 }

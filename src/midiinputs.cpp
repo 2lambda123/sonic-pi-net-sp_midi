@@ -31,13 +31,13 @@ void MidiInputs::prepareMidiInputs(bool allMidiInputs, const std::vector<std::st
 
 // This version is the one we execute when we are asked to refresh the devices
 void MidiInputs::prepareMidiInputs()
-{    
+{
     std::vector<MidiPortInfo> allInputPortsInfo = MidiIn::getInputPortInfo();
 
     m_midiInputs.clear();
     for (const auto& input : allInputPortsInfo) {
         const auto& v = m_selectedMidiInputs; // for brevity's sake
-        if (m_wantAllMidiInputs || std::find(v.begin(), v.end(), input.normalizedPortName) != v.end()){
+        if (m_wantAllMidiInputs || std::find(v.begin(), v.end(), input.normalizedPortName) != v.end()) {
             try {
                 auto midiInput = std::make_unique<MidiIn>(input.portName, input.normalizedPortName, input.portId, false);
                 m_midiInputs.push_back(std::move(midiInput));
@@ -54,6 +54,6 @@ void MidiInputs::clear()
     m_midiInputs.clear();
 }
 
-const std::vector<std::string>& MidiInputs::getSelectedMidiInputs(){
+const std::vector<std::string>& MidiInputs::getSelectedMidiInputs() {
     return m_selectedMidiInputs;
-} 
+}

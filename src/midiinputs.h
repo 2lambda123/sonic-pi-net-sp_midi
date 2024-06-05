@@ -27,7 +27,7 @@ public:
 
 
 private:
-    MidiInputs(): m_wantAllMidiInputs(false){}
+    MidiInputs(): m_wantAllMidiInputs(false) {}
 
     // MIDI in
     std::vector<std::unique_ptr<MidiIn> > m_midiInputs;
