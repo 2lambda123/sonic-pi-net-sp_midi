@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -21,56 +21,56 @@
 // SOFTWARE.
 
 #pragma once
-#include <memory.h>
-#include <vector>
-#include <string>
-#include <thread>
-#include <mutex>
 #include "blockingconcurrentqueue.h"
 #include "midiout.h"
 #include "monitorlogger.h"
+#include <memory.h>
+#include <mutex>
+#include <string>
+#include <thread>
+#include <vector>
 
 extern std::atomic<bool> g_threadsShouldFinish;
 
-class MidiSendProcessor
-{
+class MidiSendProcessor {
 private:
-    typedef struct {
-        std::string device_name;
-        std::vector<unsigned char> midi;
-    } MidiDeviceAndMessage;
+  typedef struct {
+    std::string device_name;
+    std::vector<unsigned char> midi;
+  } MidiDeviceAndMessage;
 
 public:
-    MidiSendProcessor() : m_flushing(false) {};
-    ~MidiSendProcessor();
+  MidiSendProcessor() : m_flushing(false) {};
+  ~MidiSendProcessor();
 
-    void startThread();
+  void startThread();
 
-    void prepareOutputs(const std::vector<MidiPortInfo>& portsInfo);
-    void clear();
+  void prepareOutputs(const std::vector<MidiPortInfo> &portsInfo);
+  void clear();
 
-    void processMessage(const MidiDeviceAndMessage& message_from_c);
+  void processMessage(const MidiDeviceAndMessage &message_from_c);
 
+  int getNMidiOuts() const;
+  std::string getMidiOutName(int n) const;
+  std::string getNormalizedMidiOutName(int n) const;
+  int getMidiOutId(int n) const;
 
-    int getNMidiOuts() const;
-    std::string getMidiOutName(int n) const;
-    std::string getNormalizedMidiOutName(int n) const;
-    int getMidiOutId(int n) const;
+  bool addMessage(const char *device_name, const unsigned char *c_message,
+                  std::size_t size);
+  void flushMessages();
 
-    bool addMessage(const char* device_name, const unsigned char* c_message, std::size_t size);
-    void flushMessages();
-
-    static const std::vector<std::string> getKnownOscMessages();
+  static const std::vector<std::string> getKnownOscMessages();
 
 private:
-    void send(const std::string& outDevice, const std::vector< unsigned char >* msg);
+  void send(const std::string &outDevice,
+            const std::vector<unsigned char> *msg);
 
-    std::vector<std::unique_ptr<MidiOut> > m_outputs;
-    MonitorLogger& m_logger{ MonitorLogger::getInstance() };
+  std::vector<std::unique_ptr<MidiOut>> m_outputs;
+  MonitorLogger &m_logger{MonitorLogger::getInstance()};
 
-    moodycamel::BlockingConcurrentQueue<MidiDeviceAndMessage> m_messages;
+  moodycamel::BlockingConcurrentQueue<MidiDeviceAndMessage> m_messages;
 
-    std::thread m_thread;
-    std::atomic<bool> m_flushing;
-    void run();
+  std::thread m_thread;
+  std::atomic<bool> m_flushing;
+  void run();
 };
